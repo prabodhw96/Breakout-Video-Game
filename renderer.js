@@ -36,9 +36,36 @@ for(c=0; c<brickColumnCount; c++) {
     }
 }
 
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("mousemove", mouseMoveHandler, false);
+var dialogBox=$("<div>Choose Controls</div>");
+dialogBox.dialog({
+    dialogClass: "no-close",
+    autoOpen: true,
+    buttons: {
+
+        Keyboard: function() {
+
+            document.addEventListener("keydown", keyDownHandler, false);
+            document.addEventListener("keyup", keyUpHandler, false);
+            dialogBox.dialog("close");
+            draw();
+        },
+        Mouse: function() {
+
+            document.addEventListener("mousemove", mouseMoveHandler, false);
+            document.removeEventListener("keydown",function removeKeyboard() {
+                console.log("Keyboard removed");
+            });
+            document.removeEventListener("keyup",function removeKeyup() {
+                console.log("Keyboard Removed");
+            })
+            dialogBox.dialog("close");
+            draw();
+        }
+
+    },
+    width: "400px"
+});
+
 
 function keyDownHandler(e) {
     if(e.keyCode == 39) {
@@ -206,4 +233,3 @@ function resetPaddle() {
     y += dy;
     requestAnimationFrame(draw);
 }
-draw();
