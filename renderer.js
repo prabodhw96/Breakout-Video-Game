@@ -22,6 +22,7 @@ var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 var score = 0;
 var lives = 3;
+var highscore = 0;
 
 var bricks = [];
 for(c=0; c<brickColumnCount; c++) {
@@ -66,6 +67,7 @@ function collisionDetection() {
                     dy = -dy;
                     b.status = 0;
                     score++;
+                    if(score>highscore) highscore = score;
                     if(score == brickRowCount*brickColumnCount) {
                         alert("YOU WIN, CONGRATS!");
                         document.location.reload();
@@ -112,6 +114,11 @@ function drawScore() {
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Score: "+score, 8, 20);
 }
+function drawHighScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("High Score: "+highscore, canvas.width/2 - 20, 20);
+}
 function drawLives() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "#0095DD";
@@ -124,6 +131,7 @@ function draw() {
     drawBall();
     drawPaddle();
     drawScore();
+    drawHighScore();
     drawLives();
     collisionDetection();
     
@@ -141,7 +149,7 @@ function draw() {
             lives--;
             if(!lives) {
                 alert("GAME OVER");
-                document.location.reload();
+                restart();
             }
             else {
                 x = canvas.width/2;
@@ -164,5 +172,18 @@ function draw() {
     y += dy;
     requestAnimationFrame(draw);
 }
-
-draw(); 
+function restart(){
+	score = 0;
+	lives = 3;
+	for(c=0; c<brickColumnCount; c++) {
+    	bricks[c] = [];
+    	for(r=0; r<brickRowCount; r++) {
+        	bricks[c][r] = { x: 0, y: 0, status: 1 };
+    	}
+	}
+	x = canvas.width/2;
+	y = canvas.height-30;
+	dx = 2;
+	dy = -2;
+}
+draw();
