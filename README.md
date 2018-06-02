@@ -1,7 +1,7 @@
 # Breakout Video Game
 
 ## Overview
-<b>Developed using Electron and Javascript<b>
+<b>Developed using Electron and Javascript</b>
 
 Application structure:
 
