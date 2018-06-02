@@ -23,6 +23,10 @@ var brickOffsetLeft = 30;
 var score = 0;
 var lives = 3;
 var highscore = 0;
+var hitSound = new Audio("audio/hit.mp3");
+var loseSound = new Audio("audio/lose.mp3");
+var winSound = new Audio("audio/win.mp3");
+var fallSound = new Audio("audio/fall.mp3");
 
 var bricks = [];
 for(c=0; c<brickColumnCount; c++) {
@@ -64,13 +68,19 @@ function collisionDetection() {
             var b = bricks[c][r];
             if(b.status == 1) {
                 if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+                	hitSound.currentTime = 0;
+                	hitSound.play();
                     dy = -dy;
                     b.status = 0;
                     score++;
                     if(score>highscore) highscore = score;
                     if(score == brickRowCount*brickColumnCount) {
-                        alert("YOU WIN, CONGRATS!");
-                        document.location.reload();
+                        winSound.play();
+                        setTimeout(function(){
+                        	alert("YOU WIN, CONGRATS!");
+                        	restart();
+                        });
+                        return;
                     }
                 }
             }
@@ -148,10 +158,16 @@ function draw() {
         else {
             lives--;
             if(!lives) {
-                alert("GAME OVER");
+                loseSound.play();
+                setTimeout(function(){
+                	alert("GAME OVER");
                 restart();
+                resetPaddle();
+                },1000);
+                return;
             }
             else {
+                fallSound.play();
                 x = canvas.width/2;
                 y = canvas.height-30;
                 dx = 3;
@@ -161,16 +177,7 @@ function draw() {
         }
     }
     
-    if(rightPressed && paddleX < canvas.width-paddleWidth) {
-        paddleX += 7;
-    }
-    else if(leftPressed && paddleX > 0) {
-        paddleX -= 7;
-    }
-    
-    x += dx;
-    y += dy;
-    requestAnimationFrame(draw);
+    resetPaddle();
 }
 function restart(){
 	score = 0;
@@ -185,5 +192,18 @@ function restart(){
 	y = canvas.height-30;
 	dx = 2;
 	dy = -2;
+}
+
+function resetPaddle() {
+    if(rightPressed && paddleX < canvas.width-paddleWidth) {
+        paddleX += 7;
+    }
+    else if(leftPressed && paddleX > 0) {
+        paddleX -= 7;
+    }
+
+    x += dx;
+    y += dy;
+    requestAnimationFrame(draw);
 }
 draw();
